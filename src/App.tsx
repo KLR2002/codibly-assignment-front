@@ -2,6 +2,7 @@ import { Box, Container, Heading, SimpleGrid, Text, VStack, Spinner, Center } fr
 import { useQuery } from '@tanstack/react-query';
 import { fetchEnergyMix } from './api';
 import { EnergyMixChart } from './components/EnergyMixChart';
+import { OptimalWindow } from './components/OptimalWindow';
 
 function App() {
   const { data, isLoading, isError } = useQuery({
@@ -35,11 +36,15 @@ function App() {
           )}
 
           {data && (
-            <SimpleGrid columns={{ base: 1, lg: 3 }} gap={8} w="full">
-              {data.map((mix, index) => (
-                <EnergyMixChart key={mix.date} data={mix} index={index} />
-              ))}
-            </SimpleGrid>
+            <VStack gap={10} w="full">
+              <SimpleGrid columns={{ base: 1, lg: 3 }} gap={8} w="full">
+                {data.map((mix, index) => (
+                  <EnergyMixChart key={mix.date} data={mix} index={index} />
+                ))}
+              </SimpleGrid>
+
+              <OptimalWindow />
+            </VStack>
           )}
         </VStack>
       </Container>
