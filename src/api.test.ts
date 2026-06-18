@@ -11,20 +11,23 @@ describe('API functions', () => {
       { date: '2026-06-16', cleanEnergyPercentage: 50, generationmix: [] }
     ];
 
-    global.fetch = vi.fn().mockResolvedValue({
+    const fetchMock = vi.fn().mockResolvedValue({
       ok: true,
       json: async () => mockData,
     });
+    vi.stubGlobal('fetch', fetchMock);
 
     const result = await fetchEnergyMix();
-    expect(global.fetch).toHaveBeenCalledWith('/api/energy/mix');
+    // Using stringContaining because baseUrl might be empty or a full URL
+    expect(fetchMock).toHaveBeenCalledWith(expect.stringContaining('/api/energy/mix'));
     expect(result).toEqual(mockData);
   });
 
   it('fetchEnergyMix should throw an error when response is not ok', async () => {
-    global.fetch = vi.fn().mockResolvedValue({
+    const fetchMock = vi.fn().mockResolvedValue({
       ok: false,
     });
+    vi.stubGlobal('fetch', fetchMock);
 
     await expect(fetchEnergyMix()).rejects.toThrow('Failed to fetch energy mix');
   });
@@ -32,13 +35,14 @@ describe('API functions', () => {
   it('fetchOptimalWindow should fetch with correct hours parameter', async () => {
     const mockData = { start: 'time', end: 'time', averageCleanEnergyPercentage: 70 };
     
-    global.fetch = vi.fn().mockResolvedValue({
+    const fetchMock = vi.fn().mockResolvedValue({
       ok: true,
       json: async () => mockData,
     });
+    vi.stubGlobal('fetch', fetchMock);
 
     const result = await fetchOptimalWindow(4);
-    expect(global.fetch).toHaveBeenCalledWith('/api/energy/optimal-window?hours=4');
+    expect(fetchMock).toHaveBeenCalledWith(expect.stringContaining('/api/energy/optimal-window?hours=4'));
     expect(result).toEqual(mockData);
   });
 });
